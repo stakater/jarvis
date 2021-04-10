@@ -62,7 +62,7 @@ For a kubernetes cluster to remain in a healthy state, all the nodes should rema
   |                    |Unknown             | -            | |
 
 
-- `Node Probelm Detector`
+- `Node Problem Detector`
   - By default, k8s support limited set of NodeConditions. 
   - We can use [node-problem-detector](https://github.com/kubernetes/node-problem-detector) which runs as a DaemonSet and collects different node problems and reports them in form of NodeConditions.
   
