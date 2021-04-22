@@ -147,6 +147,7 @@ We will have to decide on the effect and taint against the following conditions 
     spec:
       name: KernelDeadlock
       effect: NoExecute
+      taintKey: node.stakater.com/KernelDeadlock
       conditions:
         KernelDeadlock:
           status: true
