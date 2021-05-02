@@ -101,7 +101,7 @@ We will have to decide on the effect and taint against the following conditions 
   ```yaml
     type: ConditionSets
     conditionSets:
-    - name: KubeletContainerRuntimeUnhealthy
+    - type: KubeletContainerRuntimeUnhealthy
       effect: NoExecute
       taintKey: node.stakater.com/KubeletContainerRuntimeUnhealthy
       conditions:
@@ -109,7 +109,7 @@ We will have to decide on the effect and taint against the following conditions 
           conditionStatus: true
         - ConditionType: ContainerRuntimeUnhealthy
           conditionStatus: Unknown
-    - name: KernelDeadlock
+    - type: KernelDeadlock
       effect: NoExecute
       taintKey: node.stakater.com/KernelDeadlock
       conditions:
@@ -131,7 +131,7 @@ We will have to decide on the effect and taint against the following conditions 
     metadata:
       name: conditionset-1
     spec:
-      name: KubeletContainerRuntimeUnhealthy
+      type: KubeletContainerRuntimeUnhealthy
       effect: NoExecute
       taintKey: node.stakater.com/KubeletContainerRuntimeUnhealthy
       conditions:
@@ -145,7 +145,7 @@ We will have to decide on the effect and taint against the following conditions 
     metadata:
       name: conditionset-2
     spec:
-      name: KernelDeadlock
+      type: KernelDeadlock
       effect: NoExecute
       taintKey: node.stakater.com/KernelDeadlock
       conditions:
