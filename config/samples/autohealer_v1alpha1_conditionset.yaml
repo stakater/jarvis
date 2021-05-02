@@ -1,0 +1,7 @@
+apiVersion: autohealer.stakater.com/v1alpha1
+kind: ConditionSet
+metadata:
+  name: conditionset-sample
+spec:
+  # Add fields here
+  foo: bar

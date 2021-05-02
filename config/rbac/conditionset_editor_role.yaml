@@ -1,0 +1,24 @@
+# permissions for end users to edit conditionsets.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: conditionset-editor-role
+rules:
+- apiGroups:
+  - autohealer.stakater.com
+  resources:
+  - conditionsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autohealer.stakater.com
+  resources:
+  - conditionsets/status
+  verbs:
+  - get
