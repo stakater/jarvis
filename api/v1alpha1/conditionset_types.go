@@ -23,23 +23,68 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+type NodeConditionType string
+
+type ConditionStatus string
+
+type NodeCondition struct {
+	// Type of node condition
+	// +required
+	// +kubebuilder:validation:Required
+	Type NodeConditionType `json:"type"`
+
+	// Status of the condition, one of True, False, Unknown
+	// +required
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=True;False;Unknown
+	Status ConditionStatus `json:"status"`
+}
+
+type ConditionSetType string
+
+type TaintEffect string
+
 // ConditionSetSpec defines the desired state of ConditionSet
 type ConditionSetSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ConditionSet. Edit conditionset_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Type of ConditionSet
+	// +required
+	// +kubebuilder:validation:Required
+	Type ConditionSetType `json:"type"`
+
+	// Effect indicates the taint effect to match.
+	// Valid effects are NoSchedule, PreferNoSchedule, and NoExecute
+	// +required
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=NoSchedule;PreferNoSchedule;NoExecute
+	Effect TaintEffect `json:"effect"`
+
+	// The taint key to be applied to a node
+	// +required
+	// +kubebuilder:validation:Required
+	TaintKey string `json:"taintKey"`
+
+	// Conditions is an array of unique NodeConditions, that collectively define a ConditionSet
+	// +required
+	// +kubebuilder:validation:Required
+	Conditions []NodeCondition `json:"conditions"`
 }
 
 // ConditionSetStatus defines the observed state of ConditionSet
 type ConditionSetStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+
+	// Error
+	// +kubebuilder:validation:Optional
+	Error string `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+//+kubebuilder:resource:categories=all;auto-healer,shortName=cs
 
 // ConditionSet is the Schema for the conditionsets API
 type ConditionSet struct {

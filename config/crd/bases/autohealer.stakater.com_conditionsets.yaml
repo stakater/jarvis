@@ -1,0 +1,101 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.4.1
+  creationTimestamp: null
+  name: conditionsets.autohealer.stakater.com
+spec:
+  group: autohealer.stakater.com
+  names:
+    categories:
+    - all
+    - auto-healer
+    kind: ConditionSet
+    listKind: ConditionSetList
+    plural: conditionsets
+    shortNames:
+    - cs
+    singular: conditionset
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: ConditionSet is the Schema for the conditionsets API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ConditionSetSpec defines the desired state of ConditionSet
+            properties:
+              conditions:
+                description: Conditions is an array of unique NodeConditions, that
+                  collectively define a ConditionSet
+                items:
+                  properties:
+                    status:
+                      description: Status of the condition, one of True, False, Unknown
+                      enum:
+                      - "True"
+                      - "False"
+                      - Unknown
+                      type: string
+                    type:
+                      description: Type of node condition
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
+              effect:
+                description: Effect indicates the taint effect to match. Valid effects
+                  are NoSchedule, PreferNoSchedule, and NoExecute
+                enum:
+                - NoSchedule
+                - PreferNoSchedule
+                - NoExecute
+                type: string
+              taintKey:
+                description: The taint key to be applied to a node
+                type: string
+              type:
+                description: Type of ConditionSet
+                type: string
+            required:
+            - conditions
+            - effect
+            - taintKey
+            - type
+            type: object
+          status:
+            description: ConditionSetStatus defines the observed state of ConditionSet
+            properties:
+              status:
+                description: Error
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
