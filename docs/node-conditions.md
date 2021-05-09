@@ -126,7 +126,7 @@ We will have to decide on the effect and taint against the following conditions 
 
 -
     ```yaml
-    apiVersion: autohealer.resourcestack.com/v1alpha1
+    apiVersion: autohealer.stakater.com/v1alpha1
     kind: ConditionSet
     metadata:
       name: conditionset-1
@@ -140,7 +140,7 @@ We will have to decide on the effect and taint against the following conditions 
         ContainerRuntimeUnhealthy:
           status: unknown
     ---
-    apiVersion: autohealer.resourcestack.com/v1alpha1
+    apiVersion: autohealer.stakater.com/v1alpha1
     kind: ConditionSet
     metadata:
       name: conditionset-2

@@ -7,7 +7,7 @@
 - `NodeAutoHealer` is an object or CR of NAHO, which provides how NAHO can be enabled to provide node auto healing.
 - 
   ```yaml
-    apiVersion: autohealer.resourcestack.com/v1alpha1
+    apiVersion: autohealer.stakater.com/v1alpha1
     kind: NodeAutoHealer
     metadata:
       name: node-auto-healer-1
@@ -50,7 +50,7 @@
 - Using this CR we can monitor the progress of node's healing process. (drain node -> delete machine -> monitor, creation of replacement node)  
 -
   ```yaml
-  apiVersion: autohealer.resourcestack.com/v1alpha1
+  apiVersion: autohealer.stakater.com/v1alpha1
   kind: HealedNode
   metadata:
     name: kind-control-plane
