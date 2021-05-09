@@ -1,7 +1,25 @@
 apiVersion: autohealer.stakater.com/v1alpha1
 kind: ConditionSet
 metadata:
-  name: conditionset-sample
+  name: conditionset-1
 spec:
-  # Add fields here
-  foo: bar
+  type: KernelDeadlock
+  effect: NoExecute
+  taintKey: node.stakater.com/KernelDeadlock
+  conditions:
+  - type: KernelDeadlock
+    status: "True"
+---
+apiVersion: autohealer.stakater.com/v1alpha1
+kind: ConditionSet
+metadata:
+  name: conditionset-2
+spec:
+  type: KubeletContainerRuntimeUnhealthy
+  effect: NoExecute
+  taintKey: node.stakater.com/KubeletContainerRuntimeUnhealthy
+  conditions:
+  - type: KubeletUnhealthy
+    status: "True"
+  - type: ContainerRuntimeUnhealthy
+    status: "Unknown"

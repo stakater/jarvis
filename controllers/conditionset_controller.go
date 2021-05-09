@@ -18,6 +18,8 @@ package controllers
 
 import (
 	"context"
+	"github.com/pkg/errors"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -47,12 +49,22 @@ type ConditionSetReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.2/pkg/reconcile
-func (r *ConditionSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = r.Log.WithValues("conditionset", req.NamespacedName)
+func (r *ConditionSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	reqLogger := r.Log.WithValues("conditionset", req.NamespacedName)
+	reqLogger.Info("ConditionSet reconciliation started...")
 
-	// your logic here
+	cs := &autohealerv1alpha1.ConditionSet{}
+	err = r.Get(ctx, req.NamespacedName, cs)
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, errors.Wrap(err, "failed to load ConditionSets data")
+	}
 
-	return ctrl.Result{}, nil
+	reqLogger.Info("Found conditionSet", "ConditionSet name", cs.Name)
+
+	return
 }
 
 // SetupWithManager sets up the controller with the Manager.
