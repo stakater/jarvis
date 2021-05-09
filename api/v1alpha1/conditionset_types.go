@@ -17,32 +17,29 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"github.com/pkg/errors"
+	"github.com/stakater/jarvis/utils/slice"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-type NodeConditionType string
-
-type ConditionStatus string
-
 type NodeCondition struct {
 	// Type of node condition
 	// +required
 	// +kubebuilder:validation:Required
-	Type NodeConditionType `json:"type"`
+	Type v1.NodeConditionType `json:"type"`
 
 	// Status of the condition, one of True, False, Unknown
 	// +required
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=True;False;Unknown
-	Status ConditionStatus `json:"status"`
+	Status v1.ConditionStatus `json:"status"`
 }
 
 type ConditionSetType string
-
-type TaintEffect string
 
 // ConditionSetSpec defines the desired state of ConditionSet
 type ConditionSetSpec struct {
@@ -59,7 +56,7 @@ type ConditionSetSpec struct {
 	// +required
 	// +kubebuilder:validation:Required
 	// +kubebuilder:validation:Enum=NoSchedule;PreferNoSchedule;NoExecute
-	Effect TaintEffect `json:"effect"`
+	Effect v1.TaintEffect `json:"effect"`
 
 	// The taint key to be applied to a node
 	// +required
@@ -93,6 +90,28 @@ type ConditionSet struct {
 
 	Spec   ConditionSetSpec   `json:"spec,omitempty"`
 	Status ConditionSetStatus `json:"status,omitempty"`
+}
+
+func (cs *ConditionSet) Validate() (bool, error) {
+
+	switch cs.Spec.Effect {
+	case v1.TaintEffectPreferNoSchedule, v1.TaintEffectNoSchedule, v1.TaintEffectNoExecute:
+	default:
+		return false, errors.New("invalid Taint effect")
+	}
+
+	for _, condition := range cs.Spec.Conditions {
+		validStatus, ok := ValidNodeConditionStatusMapping[condition.Type]
+		if ok {
+			if !slice.Contains(validStatus, condition.Status) {
+				return false, errors.New("invalid NodeCondition status")
+			}
+		} else {
+			return false, errors.New("unsupported NodeConditionType")
+		}
+	}
+
+	return true, nil
 }
 
 //+kubebuilder:object:root=true
