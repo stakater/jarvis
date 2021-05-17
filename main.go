@@ -90,6 +90,14 @@ func main() {
 		setupLog.Error(err, "unable to create webhook", "webhook", "ConditionSet")
 		os.Exit(1)
 	}
+	if err = (&controllers.NtcReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("Ntc"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "Ntc")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

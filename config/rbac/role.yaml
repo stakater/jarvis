@@ -7,6 +7,16 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - autohealer.stakater.com
   resources:
   - conditionsets
@@ -28,6 +38,32 @@ rules:
   - autohealer.stakater.com
   resources:
   - conditionsets/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - autohealer.stakater.com
+  resources:
+  - ntcs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - autohealer.stakater.com
+  resources:
+  - ntcs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - autohealer.stakater.com
+  resources:
+  - ntcs/status
   verbs:
   - get
   - patch

@@ -54,7 +54,7 @@ var _ webhook.Validator = &ConditionSet{}
 func (cs *ConditionSet) ValidateCreate() error {
 	conditionsetlog.Info("validate create", "name", cs.Name)
 	status, err := cs.Validate()
-	if !status{
+	if !status {
 		return err
 	}
 	return nil
@@ -64,7 +64,7 @@ func (cs *ConditionSet) ValidateCreate() error {
 func (cs *ConditionSet) ValidateUpdate(old runtime.Object) error {
 	conditionsetlog.Info("validate update", "name", cs.Name)
 	status, err := cs.Validate()
-	if !status{
+	if !status {
 		return err
 	}
 	return nil
