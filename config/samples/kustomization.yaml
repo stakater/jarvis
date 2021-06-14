@@ -1,5 +1,5 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
-- autohealer_v1alpha1_conditionset.yaml
+- autohealer_v1alpha1_nodeconditionset.yaml
 - autohealer_v1alpha1_ntc.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

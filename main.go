@@ -18,6 +18,8 @@ package main
 
 import (
 	"flag"
+	"github.com/stakater/jarvis/controllers/ncsc"
+	"github.com/stakater/jarvis/controllers/ntc"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -32,7 +34,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	autohealerv1alpha1 "github.com/stakater/jarvis/api/v1alpha1"
-	"github.com/stakater/jarvis/controllers"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -78,19 +79,19 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.ConditionSetReconciler{
+	if err = (&ncsc.NodeConditionSetReconciler{
 		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("ConditionSet"),
+		Log:    ctrl.Log.WithName("controllers").WithName("NodeConditionSet"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "ConditionSet")
+		setupLog.Error(err, "unable to create controller", "controller", "NodeConditionSet")
 		os.Exit(1)
 	}
-	if err = (&autohealerv1alpha1.ConditionSet{}).SetupWebhookWithManager(mgr); err != nil {
+	if err = (&autohealerv1alpha1.NodeConditionSet{}).SetupWebhookWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create webhook", "webhook", "ConditionSet")
 		os.Exit(1)
 	}
-	if err = (&controllers.NtcReconciler{
+	if err = (&ntc.NtcReconciler{
 		Client: mgr.GetClient(),
 		Log:    ctrl.Log.WithName("controllers").WithName("Ntc"),
 		Scheme: mgr.GetScheme(),

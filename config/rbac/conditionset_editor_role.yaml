@@ -2,12 +2,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: conditionset-editor-role
+  name: nodeconditionset-editor-role
 rules:
 - apiGroups:
   - autohealer.stakater.com
   resources:
-  - conditionsets
+  - nodeconditionsets
   verbs:
   - create
   - delete
@@ -19,6 +19,6 @@ rules:
 - apiGroups:
   - autohealer.stakater.com
   resources:
-  - conditionsets/status
+  - nodeconditionsets/status
   verbs:
   - get

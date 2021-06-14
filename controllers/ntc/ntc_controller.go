@@ -14,12 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package ntc
 
 import (
 	"context"
 	"github.com/go-logr/logr"
 	"github.com/pkg/errors"
+	autohealerv1alpha1 "github.com/stakater/jarvis/api/v1alpha1"
+	"github.com/stakater/jarvis/controllers/ncsc"
 	v1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -54,7 +56,6 @@ func (r *NtcReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	// your logic here
 
 	var nodeList v1.NodeList
-	//var lo client.ListOption
 	err := r.List(context.Background(), &nodeList)
 
 	if err != nil {
@@ -64,11 +65,28 @@ func (r *NtcReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 		return ctrl.Result{}, errors.Wrap(err, "failed to load Nodes data")
 	}
 
+	csList, err := ncsc.GetConditionSetMap(ctx, r.Client)
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{}, errors.Wrap(err, "failed to load ConditionSets data")
+	}
+
 	for _, node := range nodeList.Items {
-		ntcLogger.Info("Found node", "Node name", node.Name)
+		ntcLogger.Info("Found node", "Node name", node.Status.Conditions)
+		checkForNodeConditionMatchingConditionSet(csList, node.Status.Conditions)
 	}
 
 	return ctrl.Result{}, nil
+}
+
+func checkForNodeConditionMatchingConditionSet(ncsList *autohealerv1alpha1.NodeConditionSetList, nodeConditions []v1.NodeCondition) {
+
+	for _, ncs := range ncsList.Items {
+		_ = ncs.Spec.NodeConditions
+
+	}
 }
 
 // SetupWithManager sets up the controller with the Manager.
@@ -76,5 +94,6 @@ func (r *NtcReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		// Uncomment the following line adding a pointer to an instance of the controlled resource as an argument
 		For(&v1.Node{}).
+		Owns(&autohealerv1alpha1.NodeConditionSet{}).
 		Complete(r)
 }

@@ -39,17 +39,17 @@ type NodeCondition struct {
 	Status v1.ConditionStatus `json:"status"`
 }
 
-type ConditionSetType string
+type NodeConditionSetName string
 
-// ConditionSetSpec defines the desired state of ConditionSet
-type ConditionSetSpec struct {
+// NodeConditionSetSpec defines the desired state of NodeConditionSet
+type NodeConditionSetSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Type of ConditionSet
+	// Type of NodeConditionSet
 	// +required
 	// +kubebuilder:validation:Required
-	Type ConditionSetType `json:"type"`
+	Name NodeConditionSetName `json:"name"`
 
 	// Effect indicates the taint effect to match.
 	// Valid effects are NoSchedule, PreferNoSchedule, and NoExecute
@@ -63,14 +63,14 @@ type ConditionSetSpec struct {
 	// +kubebuilder:validation:Required
 	TaintKey string `json:"taintKey"`
 
-	// Conditions is an array of unique NodeConditions, that collectively define a ConditionSet
+	// NodeConditions is an array of unique NodeCondition, that collectively define a NodeConditionSet
 	// +required
 	// +kubebuilder:validation:Required
-	Conditions []NodeCondition `json:"conditions"`
+	NodeConditions []NodeCondition `json:"nodeConditions"`
 }
 
-// ConditionSetStatus defines the observed state of ConditionSet
-type ConditionSetStatus struct {
+// NodeConditionSetStatus defines the observed state of NodeConditionSet
+type NodeConditionSetStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
@@ -81,29 +81,29 @@ type ConditionSetStatus struct {
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
-//+kubebuilder:resource:categories=all;auto-healer,shortName=cs
+//+kubebuilder:resource:categories=all;auto-healer,shortName=ncs
 
-// ConditionSet is the Schema for the conditionsets API
-type ConditionSet struct {
+// NodeConditionSet is the Schema for the NodeConditionSets API
+type NodeConditionSet struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   ConditionSetSpec   `json:"spec,omitempty"`
-	Status ConditionSetStatus `json:"status,omitempty"`
+	Spec   NodeConditionSetSpec   `json:"spec,omitempty"`
+	Status NodeConditionSetStatus `json:"status,omitempty"`
 }
 
-func (cs *ConditionSet) Validate() (bool, error) {
+func (ncs *NodeConditionSet) Validate() (bool, error) {
 
-	switch cs.Spec.Effect {
+	switch ncs.Spec.Effect {
 	case v1.TaintEffectPreferNoSchedule, v1.TaintEffectNoSchedule, v1.TaintEffectNoExecute:
 	default:
 		return false, errors.New("invalid Taint effect")
 	}
 
-	for _, condition := range cs.Spec.Conditions {
-		validStatus, ok := ValidNodeConditionStatusMapping[condition.Type]
+	for _, nodeCondition := range ncs.Spec.NodeConditions {
+		validStatus, ok := ValidNodeConditionStatusMapping[nodeCondition.Type]
 		if ok {
-			if !slice.Contains(validStatus, condition.Status) {
+			if !slice.Contains(validStatus, nodeCondition.Status) {
 				return false, errors.New("invalid NodeCondition status")
 			}
 		} else {
@@ -116,13 +116,13 @@ func (cs *ConditionSet) Validate() (bool, error) {
 
 //+kubebuilder:object:root=true
 
-// ConditionSetList contains a list of ConditionSet
-type ConditionSetList struct {
+// NodeConditionSetList contains a list of NodeConditionSet
+type NodeConditionSetList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []ConditionSet `json:"items"`
+	Items           []NodeConditionSet `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&ConditionSet{}, &ConditionSetList{})
+	SchemeBuilder.Register(&NodeConditionSet{}, &NodeConditionSetList{})
 }

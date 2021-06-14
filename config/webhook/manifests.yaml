@@ -13,9 +13,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /mutate-autohealer-stakater-com-v1alpha1-conditionset
+      path: /mutate-autohealer-stakater-com-v1alpha1-nodeconditionset
   failurePolicy: Fail
-  name: mconditionset.kb.io
+  name: mnodeconditionset.kb.io
   rules:
   - apiGroups:
     - autohealer.stakater.com
@@ -25,7 +25,7 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - conditionsets
+    - nodeconditionsets
   sideEffects: None
 
 ---
@@ -42,9 +42,9 @@ webhooks:
     service:
       name: webhook-service
       namespace: system
-      path: /validate-autohealer-stakater-com-v1alpha1-conditionset
+      path: /validate-autohealer-stakater-com-v1alpha1-nodeconditionset
   failurePolicy: Fail
-  name: vconditionset.kb.io
+  name: vnodeconditionset.kb.io
   rules:
   - apiGroups:
     - autohealer.stakater.com
@@ -54,5 +54,5 @@ webhooks:
     - CREATE
     - UPDATE
     resources:
-    - conditionsets
+    - nodeconditionsets
   sideEffects: None

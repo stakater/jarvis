@@ -17,20 +17,24 @@ limitations under the License.
 package controllers
 
 import (
-	"path/filepath"
-	"testing"
-
+	"context"
+	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	autohealerv1alpha1 "github.com/stakater/jarvis/api/v1alpha1"
+	"github.com/stakater/jarvis/controllers/ncsc"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
+	"path/filepath"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
-	autohealerv1alpha1 "github.com/stakater/jarvis/api/v1alpha1"
+	"testing"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -51,7 +55,7 @@ func TestAPIs(t *testing.T) {
 
 var _ = BeforeSuite(func() {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
-
+	logf.Log.Info("bootstrapping test environment.............")
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
 		CRDDirectoryPaths:     []string{filepath.Join("..", "config", "crd", "bases")},
@@ -71,7 +75,66 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
+	k8sManager, err := ctrl.NewManager(cfg, ctrl.Options{
+		Scheme:    scheme.Scheme,
+		Namespace: "",
+	})
+
+	err = (&ncsc.NodeConditionSetReconciler{
+		Client: k8sClient,
+		Log:    ctrl.Log.WithName("controllers").WithName("Ntc"),
+		Scheme: k8sManager.GetScheme(),
+	}).SetupWithManager(k8sManager)
+	Expect(err).ToNot(HaveOccurred())
+
+	go func() {
+		err = k8sManager.Start(ctrl.SetupSignalHandler())
+		Expect(err).ToNot(HaveOccurred())
+	}()
+
+	ncs := createNodeConditionSet()
+	Expect(k8sClient.Create(context.Background(), ncs)).Should(Succeed())
+
+	ncs1 := &autohealerv1alpha1.NodeConditionSet{}
+	err = k8sClient.Get(context.Background(), types.NamespacedName{
+		Namespace: "default",
+		Name:      "nodeconditionset-1",
+	}, ncs1)
+
+	fmt.Println("NodeConditonSet.............", "NodeConditionSet", ncs)
+	if err != nil {
+		logf.Log.Error(err, "Failed to get ConditionSet by Name: conditionset-1")
+	} else {
+		logf.Log.Info("Found NodeCondtionSet, ", "CondtionSet: ", ncs1)
+	}
+
 }, 60)
+
+func createNodeConditionSet() *autohealerv1alpha1.NodeConditionSet {
+	ncs := &autohealerv1alpha1.NodeConditionSet{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "NodeConditionSet",
+			APIVersion: "autohealer.stakater.com/v1alpha1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "nodeconditionset-1",
+			Namespace: "default",
+		},
+		Spec: autohealerv1alpha1.NodeConditionSetSpec{
+			Name:     "KernelDeadlock",
+			Effect:   "NoExecute",
+			TaintKey: "node.stakater.com/KernelDeadlock",
+			NodeConditions: []autohealerv1alpha1.NodeCondition{
+				{
+					Type:   "KernelDeadlock",
+					Status: "True",
+				},
+			},
+		},
+	}
+
+	return ncs
+}
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")

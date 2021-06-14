@@ -6,25 +6,25 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
-  name: conditionsets.autohealer.stakater.com
+  name: nodeconditionsets.autohealer.stakater.com
 spec:
   group: autohealer.stakater.com
   names:
     categories:
     - all
     - auto-healer
-    kind: ConditionSet
-    listKind: ConditionSetList
-    plural: conditionsets
+    kind: NodeConditionSet
+    listKind: NodeConditionSetList
+    plural: nodeconditionsets
     shortNames:
-    - cs
-    singular: conditionset
+    - ncs
+    singular: nodeconditionset
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: ConditionSet is the Schema for the conditionsets API
+        description: NodeConditionSet is the Schema for the NodeConditionSets API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -39,11 +39,22 @@ spec:
           metadata:
             type: object
           spec:
-            description: ConditionSetSpec defines the desired state of ConditionSet
+            description: NodeConditionSetSpec defines the desired state of NodeConditionSet
             properties:
-              conditions:
-                description: Conditions is an array of unique NodeConditions, that
-                  collectively define a ConditionSet
+              effect:
+                description: Effect indicates the taint effect to match. Valid effects
+                  are NoSchedule, PreferNoSchedule, and NoExecute
+                enum:
+                - NoSchedule
+                - PreferNoSchedule
+                - NoExecute
+                type: string
+              name:
+                description: Type of NodeConditionSet
+                type: string
+              nodeConditions:
+                description: NodeConditions is an array of unique NodeCondition, that
+                  collectively define a NodeConditionSet
                 items:
                   properties:
                     status:
@@ -61,28 +72,17 @@ spec:
                   - type
                   type: object
                 type: array
-              effect:
-                description: Effect indicates the taint effect to match. Valid effects
-                  are NoSchedule, PreferNoSchedule, and NoExecute
-                enum:
-                - NoSchedule
-                - PreferNoSchedule
-                - NoExecute
-                type: string
               taintKey:
                 description: The taint key to be applied to a node
                 type: string
-              type:
-                description: Type of ConditionSet
-                type: string
             required:
-            - conditions
             - effect
+            - name
+            - nodeConditions
             - taintKey
-            - type
             type: object
           status:
-            description: ConditionSetStatus defines the observed state of ConditionSet
+            description: NodeConditionSetStatus defines the observed state of NodeConditionSet
             properties:
               status:
                 description: Error

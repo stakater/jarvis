@@ -10,19 +10,19 @@ func TestConditionSet_Validate(t *testing.T) {
 	const TaintEffectNotSupported v1.TaintEffect = "NotSupported"
 
 	tests := []struct {
-		Scenario     string
-		ConditionSet ConditionSet
-		Expected     bool
-		ExpectedErr  bool
+		Scenario         string
+		NodeConditionSet NodeConditionSet
+		Expected         bool
+		ExpectedErr      bool
 	}{
 		{
-			Scenario: "valid conditionset",
-			ConditionSet: ConditionSet{
-				Spec: ConditionSetSpec{
-					Type:     "KubeletContainerRuntimeUnhealthy",
+			Scenario: "valid nodeconditionset",
+			NodeConditionSet: NodeConditionSet{
+				Spec: NodeConditionSetSpec{
+					Name:     "KubeletContainerRuntimeUnhealthy",
 					Effect:   v1.TaintEffectNoExecute,
 					TaintKey: "node.stakater.com/KubeletContainerRuntimeUnhealthy",
-					Conditions: []NodeCondition{
+					NodeConditions: []NodeCondition{
 						{
 							Type:   KubeletUnhealthy,
 							Status: v1.ConditionTrue,
@@ -38,13 +38,13 @@ func TestConditionSet_Validate(t *testing.T) {
 			ExpectedErr: false,
 		},
 		{
-			Scenario: "invalid conditionset",
-			ConditionSet: ConditionSet{
-				Spec: ConditionSetSpec{
-					Type:     "KernelDeadlock",
+			Scenario: "invalid nodeconditionset",
+			NodeConditionSet: NodeConditionSet{
+				Spec: NodeConditionSetSpec{
+					Name:     "KernelDeadlock",
 					Effect:   v1.TaintEffectNoExecute,
 					TaintKey: "node.stakater.com/KernelDeadlock",
-					Conditions: []NodeCondition{
+					NodeConditions: []NodeCondition{
 						{
 							Type:   KernelDeadlock,
 							Status: v1.ConditionFalse,
@@ -57,12 +57,12 @@ func TestConditionSet_Validate(t *testing.T) {
 		},
 		{
 			Scenario: "invalid taint effect",
-			ConditionSet: ConditionSet{
-				Spec: ConditionSetSpec{
-					Type:     "KernelDeadlock",
+			NodeConditionSet: NodeConditionSet{
+				Spec: NodeConditionSetSpec{
+					Name:     "KernelDeadlock",
 					Effect:   TaintEffectNotSupported,
 					TaintKey: "node.stakater.com/KernelDeadlock",
-					Conditions: []NodeCondition{
+					NodeConditions: []NodeCondition{
 						{
 							Type:   KernelDeadlock,
 							Status: v1.ConditionFalse,
@@ -77,9 +77,9 @@ func TestConditionSet_Validate(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.Scenario, func(t *testing.T) {
-			status, err := tc.ConditionSet.Validate()
+			status, err := tc.NodeConditionSet.Validate()
 			if tc.Expected != status {
-				t.Errorf("expected a valid ConditionSet")
+				t.Errorf("expected a valid NodeConditionSet")
 			}
 
 			if tc.ExpectedErr {

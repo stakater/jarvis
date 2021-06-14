@@ -19,7 +19,7 @@ rules:
 - apiGroups:
   - autohealer.stakater.com
   resources:
-  - conditionsets
+  - nodeconditionsets
   verbs:
   - create
   - delete
@@ -31,13 +31,13 @@ rules:
 - apiGroups:
   - autohealer.stakater.com
   resources:
-  - conditionsets/finalizers
+  - nodeconditionsets/finalizers
   verbs:
   - update
 - apiGroups:
   - autohealer.stakater.com
   resources:
-  - conditionsets/status
+  - nodeconditionsets/status
   verbs:
   - get
   - patch

@@ -1,24 +1,24 @@
 apiVersion: autohealer.stakater.com/v1alpha1
-kind: ConditionSet
+kind: NodeConditionSet
 metadata:
-  name: conditionset-1
+  name: nodeconditionset-1
 spec:
-  type: KernelDeadlock
+  name: KernelDeadlock
   effect: NoExecute
   taintKey: node.stakater.com/KernelDeadlock
-  conditions:
+  nodeConditions:
   - type: KernelDeadlock
     status: "True"
 ---
 apiVersion: autohealer.stakater.com/v1alpha1
-kind: ConditionSet
+kind: NodeConditionSet
 metadata:
-  name: conditionset-2
+  name: nodeconditionset-2
 spec:
-  type: KubeletContainerRuntimeUnhealthy
+  name: KubeletContainerRuntimeUnhealthy
   effect: NoExecute
   taintKey: node.stakater.com/KubeletContainerRuntimeUnhealthy
-  conditions:
+  nodeConditions:
   - type: KubeletUnhealthy
     status: "True"
   - type: ContainerRuntimeUnhealthy

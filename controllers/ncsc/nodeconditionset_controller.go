@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package ncsc
 
 import (
 	"context"
@@ -29,16 +29,16 @@ import (
 	autohealerv1alpha1 "github.com/stakater/jarvis/api/v1alpha1"
 )
 
-// ConditionSetReconciler reconciles a ConditionSet object
-type ConditionSetReconciler struct {
+// NodeConditionSetReconciler reconciles a NodeConditionSet object
+type NodeConditionSetReconciler struct {
 	client.Client
 	Log    logr.Logger
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=conditionsets,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=conditionsets/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=conditionsets/finalizers,verbs=update
+//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=nodeconditionsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=nodeconditionsets/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=autohealer.stakater.com,resources=nodeconditionsets/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -49,27 +49,36 @@ type ConditionSetReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.7.2/pkg/reconcile
-func (r *ConditionSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
-	reqLogger := r.Log.WithValues("conditionset", req.NamespacedName)
-	reqLogger.Info("ConditionSet reconciliation started...")
+func (r *NodeConditionSetReconciler) Reconcile(ctx context.Context, req ctrl.Request) (result ctrl.Result, err error) {
+	reqLogger := r.Log.WithValues("nodeconditionset", req.NamespacedName)
+	reqLogger.Info("NodeConditionSet reconciliation started...")
 
-	cs := &autohealerv1alpha1.ConditionSet{}
-	err = r.Get(ctx, req.NamespacedName, cs)
+	ncs := &autohealerv1alpha1.NodeConditionSet{}
+	err = r.Get(ctx, req.NamespacedName, ncs)
 	if err != nil {
 		if k8serrors.IsNotFound(err) {
 			return ctrl.Result{}, err
 		}
-		return ctrl.Result{}, errors.Wrap(err, "failed to load ConditionSets data")
+		return ctrl.Result{}, errors.Wrap(err, "failed to load NodeConditionSets data")
 	}
 
-	reqLogger.Info("Found conditionSet", "ConditionSet name", cs.Name)
+	reqLogger.Info("Found nodeConditionSet", "NodeConditionSet name", ncs.Name)
 
 	return
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *ConditionSetReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *NodeConditionSetReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&autohealerv1alpha1.ConditionSet{}).
+		For(&autohealerv1alpha1.NodeConditionSet{}).
 		Complete(r)
+}
+
+func GetConditionSetMap(ctx context.Context, client client.Client) (*autohealerv1alpha1.NodeConditionSetList, error) {
+	var ncsList autohealerv1alpha1.NodeConditionSetList
+	err := client.List(ctx, &ncsList)
+	if err != nil {
+		return nil, err
+	}
+	return &ncsList, nil
 }

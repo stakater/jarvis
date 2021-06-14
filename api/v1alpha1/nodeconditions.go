@@ -52,9 +52,9 @@ const (
 )
 
 // ValidNodeConditionStatusMapping provides valid supported condition status against
-// the specific node condition type that could be used in creation of ConditionSet.
-// This will be used in validating list of ConditionSet's Conditions.
-// This is a precautionary measure to make sure that we don't allow any Conditions
+// the specific node condition type that could be used in creation of NodeConditionSet.
+// This will be used in validating list of NodeConditionSet's Conditions.
+// This is a precautionary measure to make sure that we don't allow any NodeConditions
 // that could lead in healing a already healthy node.
 // For example:
 // Suppose one of the Condition belonging to a ConditionSet is :
@@ -62,7 +62,7 @@ const (
 // Where status False meaning nodes which don't have memory pressure, which all healthy node
 // will have.
 // This could lead to an unnecessary healing enforcement on a healthy nodes.
-// To avoid such case, we will validate ConditionSet's conditions at the time of creation.
+// To avoid such case, we will validate NodeConditionSet's NodeConditions at the time of creation.
 var ValidNodeConditionStatusMapping = map[v1.NodeConditionType][]v1.ConditionStatus{
 	NodeReady:                   []v1.ConditionStatus{v1.ConditionFalse, v1.ConditionUnknown},
 	NodeMemoryPressure:          []v1.ConditionStatus{v1.ConditionTrue, v1.ConditionUnknown},

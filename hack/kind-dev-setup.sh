@@ -5,7 +5,7 @@ kind_cluster=$(kind get clusters 2>&1)
 if [[ $kind_cluster =~ "No kind clusters found" ]]; then
   echo "No kind cluster found..."
   echo "Creating kind cluster..."
-  kind create cluster
+  kind create cluster --config hack/3-node-kind-config.yaml
 
   echo "Setting up Certificate manager..."
   kubectl create -f config/external/cert-manager.yaml

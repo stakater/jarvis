@@ -24,36 +24,36 @@ import (
 )
 
 // log is for logging in this package.
-var conditionsetlog = logf.Log.WithName("conditionset-resource")
+var nodeconditionsetlog = logf.Log.WithName("nodeconditionset-resource")
 
-func (cs *ConditionSet) SetupWebhookWithManager(mgr ctrl.Manager) error {
+func (ncs *NodeConditionSet) SetupWebhookWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewWebhookManagedBy(mgr).
-		For(cs).
+		For(ncs).
 		Complete()
 }
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-//+kubebuilder:webhook:path=/mutate-autohealer-stakater-com-v1alpha1-conditionset,mutating=true,failurePolicy=fail,sideEffects=None,groups=autohealer.stakater.com,resources=conditionsets,verbs=create;update,versions=v1alpha1,name=mconditionset.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/mutate-autohealer-stakater-com-v1alpha1-nodeconditionset,mutating=true,failurePolicy=fail,sideEffects=None,groups=autohealer.stakater.com,resources=nodeconditionsets,verbs=create;update,versions=v1alpha1,name=mnodeconditionset.kb.io,admissionReviewVersions={v1,v1beta1}
 
-var _ webhook.Defaulter = &ConditionSet{}
+var _ webhook.Defaulter = &NodeConditionSet{}
 
 // Default implements webhook.Defaulter so a webhook will be registered for the type
-func (cs *ConditionSet) Default() {
-	conditionsetlog.Info("default", "name", cs.Name)
+func (ncs *NodeConditionSet) Default() {
+	nodeconditionsetlog.Info("default", "name", ncs.Name)
 
 	// TODO(user): fill in your defaulting logic.
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-//+kubebuilder:webhook:path=/validate-autohealer-stakater-com-v1alpha1-conditionset,mutating=false,failurePolicy=fail,sideEffects=None,groups=autohealer.stakater.com,resources=conditionsets,verbs=create;update,versions=v1alpha1,name=vconditionset.kb.io,admissionReviewVersions={v1,v1beta1}
+//+kubebuilder:webhook:path=/validate-autohealer-stakater-com-v1alpha1-nodeconditionset,mutating=false,failurePolicy=fail,sideEffects=None,groups=autohealer.stakater.com,resources=nodeconditionsets,verbs=create;update,versions=v1alpha1,name=vnodeconditionset.kb.io,admissionReviewVersions={v1,v1beta1}
 
-var _ webhook.Validator = &ConditionSet{}
+var _ webhook.Validator = &NodeConditionSet{}
 
 // ValidateCreate implements webhook.Validator so a webhook will be registered for the type
-func (cs *ConditionSet) ValidateCreate() error {
-	conditionsetlog.Info("validate create", "name", cs.Name)
-	status, err := cs.Validate()
+func (ncs *NodeConditionSet) ValidateCreate() error {
+	nodeconditionsetlog.Info("validate create", "name", ncs.Name)
+	status, err := ncs.Validate()
 	if !status {
 		return err
 	}
@@ -61,9 +61,9 @@ func (cs *ConditionSet) ValidateCreate() error {
 }
 
 // ValidateUpdate implements webhook.Validator so a webhook will be registered for the type
-func (cs *ConditionSet) ValidateUpdate(old runtime.Object) error {
-	conditionsetlog.Info("validate update", "name", cs.Name)
-	status, err := cs.Validate()
+func (ncs *NodeConditionSet) ValidateUpdate(old runtime.Object) error {
+	nodeconditionsetlog.Info("validate update", "name", ncs.Name)
+	status, err := ncs.Validate()
 	if !status {
 		return err
 	}
@@ -71,8 +71,8 @@ func (cs *ConditionSet) ValidateUpdate(old runtime.Object) error {
 }
 
 // ValidateDelete implements webhook.Validator so a webhook will be registered for the type
-func (cs *ConditionSet) ValidateDelete() error {
-	conditionsetlog.Info("validate delete", "name", cs.Name)
+func (ncs *NodeConditionSet) ValidateDelete() error {
+	nodeconditionsetlog.Info("validate delete", "name", ncs.Name)
 
 	// TODO(user): fill in your validation logic upon object deletion.
 	return nil
